@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark" />
+    <title>Camera view</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="view-app">
+    <canvas id="view"></canvas>
+    <div class="view-bar">
+      <span id="live-pill" class="pill">Connecting</span>
+      <span id="motion-pill" class="pill warn" hidden>Movement</span>
+      <button type="button" id="borders" class="text-btn" title="Outline what changed, in red">Borders</button>
+      <button type="button" id="pin" class="text-btn">Keep on top</button>
+      <button type="button" id="fs" class="text-btn">Fullscreen</button>
+    </div>
+    <script src="view.js"></script>
+  </body>
+</html>

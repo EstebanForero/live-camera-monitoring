@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark" />
+    <title>Camera Live</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="top">
+        <div class="brand">
+          <span class="mark" aria-hidden="true"></span>
+          <div>
+            <p class="kicker" id="kicker">Tapo C200</p>
+            <h1 id="cam-name">Camera Live</h1>
+          </div>
+        </div>
+        <div class="top-actions">
+          <span id="live-pill" class="pill">Idle</span>
+          <div class="seg" role="group" aria-label="Stream quality">
+            <button type="button" id="q-sub" class="seg-btn is-on">Smooth</button>
+            <button type="button" id="q-main" class="seg-btn">HD</button>
+          </div>
+          <span id="motion-pill" class="pill warn" hidden>Movement</span>
+          <button type="button" id="fs" class="text-btn">Fullscreen</button>
+          <button type="button" id="pop" class="text-btn">Pop out</button>
+          <button type="button" id="open-settings" class="text-btn text-btn-strong">Camera</button>
+        </div>
+      </header>
+
+      <div class="stage">
+        <section class="well" id="well">
+          <canvas id="view"></canvas>
+          <div id="overlay" class="overlay">
+            <p class="eyebrow">Local monitor</p>
+            <h2 id="overlay-title">Connect your Tapo C200</h2>
+            <p id="overlay-body">
+              In the Tapo app, open the camera, then Settings, Advanced Settings, Camera Account.
+              Create a username and password there. It is separate from your TP-Link login, and this
+              computer has to be on the same network as the camera.
+            </p>
+            <button type="button" id="overlay-action" class="solid">Add camera</button>
+          </div>
+        </section>
+
+        <aside class="deck">
+          <div class="deck-head">
+            <h2>Aim</h2>
+            <p id="ptz-note">Hold a direction to turn. A short press nudges.</p>
+          </div>
+          <div class="pad" id="pad">
+            <button type="button" class="pad-btn" data-pan="0" data-tilt="1" aria-label="Tilt up">Up</button>
+            <button type="button" class="pad-btn" data-pan="-1" data-tilt="0" aria-label="Pan left">Left</button>
+            <button type="button" class="pad-btn pad-home" id="home" aria-label="Go to home position">Home</button>
+            <button type="button" class="pad-btn" data-pan="1" data-tilt="0" aria-label="Pan right">Right</button>
+            <button type="button" class="pad-btn" data-pan="0" data-tilt="-1" aria-label="Tilt down">Down</button>
+          </div>
+          <label class="speed">
+            <span>Speed <strong id="speed-read">5</strong></span>
+            <input id="speed" type="range" min="2" max="10" value="5" />
+          </label>
+          <div class="preset-row" id="presets"></div>
+          <form id="preset-form" class="preset-form">
+            <input id="preset-name" type="text" maxlength="24" placeholder="Name this view" />
+            <button type="submit" class="text-btn">Save</button>
+          </form>
+          <label class="check motion-toggle"><input id="motion" type="checkbox" checked /> Notify on movement</label>
+          <label class="check motion-toggle"><input id="borders" type="checkbox" /> Outline movement</label>
+          <label class="speed">
+            <span>Sensitivity <strong id="motion-read">5</strong></span>
+            <input id="motion-sens" type="range" min="1" max="10" value="5" />
+          </label>
+          <p class="fine">Notifications and the red outline are separate. Turning the camera does not count, and alerts are at least 20 seconds apart. The outline is drawn in the popped-out view.</p>
+          <p id="motion-state" class="fine"></p>
+          <button type="button" id="snap" class="solid solid-block">Save snapshot</button>
+        </aside>
+      </div>
+
+      <footer class="status">
+        <span id="stat-res">No picture yet</span>
+        <span id="stat-fps"></span>
+        <span id="stat-rate"></span>
+        <span class="hint">Arrows move · H home · S snapshot · F fullscreen</span>
+      </footer>
+    </div>
+
+    <div id="settings" class="sheet" hidden>
+      <form id="settings-form" class="sheet-card">
+        <div class="sheet-head">
+          <div>
+            <p class="eyebrow">Camera account</p>
+            <h2>Tapo C200</h2>
+          </div>
+          <button type="button" id="close-settings" class="text-btn" aria-label="Close">Close</button>
+        </div>
+        <p class="sheet-copy">
+          Use the username and password from the Tapo app under Advanced Settings, Camera Account.
+          The address is the camera's IP on your network. Tapo uses port 554 for the picture and
+          port 2020 for pan and tilt.
+        </p>
+        <label>Name <input id="f-name" name="name" autocomplete="off" placeholder="Living room" /></label>
+        <label>Address <input id="f-host" name="host" autocomplete="off" spellcheck="false" placeholder="192.168.0.101" required /></label>
+        <div class="split">
+          <label>RTSP port <input id="f-rtsp" name="rtsp" inputmode="numeric" value="554" /></label>
+          <label>ONVIF port <input id="f-onvif" name="onvif" inputmode="numeric" value="2020" /></label>
+        </div>
+        <div class="split">
+          <label>Username <input id="f-user" name="username" autocomplete="off" required /></label>
+          <label>Password <input id="f-pass" name="password" type="password" autocomplete="off" required /></label>
+        </div>
+        <label class="check"><input id="f-show" type="checkbox" /> Show password</label>
+        <fieldset>
+          <legend>Picture</legend>
+          <label class="check"><input type="radio" name="stream" value="sub" checked /> Smooth, the lighter stream</label>
+          <label class="check"><input type="radio" name="stream" value="main" /> HD, 1080p</label>
+        </fieldset>
+        <p id="test-result" class="test-result"></p>
+        <div class="sheet-actions">
+          <button type="button" id="test" class="text-btn">Test connection</button>
+          <button type="submit" class="solid">Save and watch</button>
+        </div>
+        <p class="fine">Settings stay on this computer in ~/.config/camera-live/config.json.</p>
+      </form>
+    </div>
+
+    <div id="toast" class="toast" hidden></div>
+    <script src="app.js"></script>
+  </body>
+</html>

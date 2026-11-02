@@ -1,0 +1,6 @@
+{
+  "identifier": "default",
+  "description": "Local window for the camera monitor",
+  "windows": ["main", "view"],
+  "permissions": ["core:default"]
+}
